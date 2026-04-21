@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+# Only run if any apps/ or cluster/ files are staged
+if ! git diff --cached --name-only | grep -qE '^(apps|cluster)/'; then
+  exit 0
+fi
+
+echo "==> Kubernetes manifests changed, running validate.sh..."
+bash "$REPO_ROOT/scripts/validate.sh"
