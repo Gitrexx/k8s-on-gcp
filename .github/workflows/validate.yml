@@ -1,0 +1,45 @@
+name: Validate manifests
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "apps/**"
+
+jobs:
+  validate:
+    name: Kustomize dry-run
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Kustomize
+        run: |
+          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+          sudo mv kustomize /usr/local/bin/
+
+      - name: Detect changed apps
+        id: changed
+        run: |
+          git fetch origin ${{ github.base_ref }} --depth=1
+          CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep '^apps/' | cut -d'/' -f2 | sort -u)
+          echo "apps=${CHANGED}" >> $GITHUB_OUTPUT
+          echo "Changed apps: ${CHANGED}"
+
+      - name: Build changed overlays
+        run: |
+          for app in ${{ steps.changed.outputs.apps }}; do
+            echo "==> Validating apps/${app}/overlays/dev"
+            kustomize build "apps/${app}/overlays/dev"
+          done
+
+      - name: Lint with kubeval
+        run: |
+          curl -L https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz | tar xz
+          sudo mv kubeval /usr/local/bin/
+          for app in ${{ steps.changed.outputs.apps }}; do
+            kustomize build "apps/${app}/overlays/dev" | kubeval --strict
+          done
