@@ -1,13 +1,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-bases:
+resources:
   - ../../base
-
-# Pin a specific image tag for reproducibility
-images:
-  - name: ghcr.io/mlflow/mlflow
-    newTag: "2.11.3"
 
 # Example: scale down replicas in dev to save resources
 patches:

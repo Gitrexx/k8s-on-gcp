@@ -12,8 +12,9 @@ echo "==> Building cluster kustomization..."
 kustomize build cluster/
 
 if $DRY_RUN; then
-  echo "==> Dry-run (server-side)..."
-  kustomize build cluster/ | kubectl apply --dry-run=server -f -
+  echo "==> Dry-run (build only, no cluster required)..."
+  kustomize build cluster/ > /dev/null
+  echo "==> Manifests rendered successfully."
 else
   echo "==> Applying to cluster..."
   kustomize build cluster/ | kubectl apply -f -
