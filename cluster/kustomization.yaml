@@ -4,3 +4,4 @@ kind: Kustomization
 # Entry point for CI — add new apps here
 resources:
   - ../apps/mlflow/overlays/dev
+  - ../apps/hello/overlays/dev

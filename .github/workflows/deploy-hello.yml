@@ -1,0 +1,25 @@
+name: Deploy hello
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/hello/**"
+
+jobs:
+  deploy:
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/_deploy-app.yml
+    with:
+      overlay_path: apps/hello/overlays/dev
+      deployment_name: hello
+      namespace: hello
+    secrets:
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      GKE_CLUSTER_NAME: ${{ secrets.GKE_CLUSTER_NAME }}
+      GKE_CLUSTER_ZONE: ${{ secrets.GKE_CLUSTER_ZONE }}
+      WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+      ACTIONS_SERVICE_ACCOUNT: ${{ secrets.ACTIONS_SERVICE_ACCOUNT }}
