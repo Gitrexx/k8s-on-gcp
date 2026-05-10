@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - "apps/hello/**"
+      - ".github/workflows/_deploy-app.yml"
+      - ".github/workflows/deploy-hello.yml"
 
 jobs:
   deploy:

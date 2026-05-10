@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - "apps/mlflow/**"
+      - ".github/workflows/_deploy-app.yml"
+      - ".github/workflows/deploy-mlflow.yml"
 
 jobs:
   deploy:
